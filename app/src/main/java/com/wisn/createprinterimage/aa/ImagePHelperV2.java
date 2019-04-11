@@ -40,9 +40,9 @@ public class ImagePHelperV2 {
             return Bitmap.createBitmap(WIDTH, WIDTH / 4, Bitmap.Config.RGB_565);
         Paint paint = new Paint();
         paint.setAntiAlias(false);
-        Typeface typeface = Typeface.createFromAsset(context.getAssets(), "fonts/pingfanghei.ttf");
-        Typeface font = Typeface.create(typeface, Typeface.NORMAL);
-        paint.setTypeface(font);
+//        Typeface typeface = Typeface.createFromAsset(context.getAssets(), "fonts/songti.TTF");
+//        Typeface font = Typeface.create(typeface, Typeface.NORMAL);
+//        paint.setTypeface(font);
         int FontHeightSum = 0;
         for (PrintParameter mParameter : AllString) {
             paint.setTextSize(sp2px(context, mParameter.getSize()));
