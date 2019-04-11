@@ -6,6 +6,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
+
+import com.wisn.createprinterimage.BitmapUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +18,7 @@ import java.util.List;
  */
 public class ImagePHelperV2 {
 
-    private final static int WIDTH = 384;
+    public final static int WIDTH = 384;
     private final static int START_LEFT = 0;
 
 
@@ -37,9 +40,9 @@ public class ImagePHelperV2 {
             return Bitmap.createBitmap(WIDTH, WIDTH / 4, Bitmap.Config.RGB_565);
         Paint paint = new Paint();
         paint.setAntiAlias(false);
-       /* Typeface typeface = Typeface.createFromAsset(context.getAssets(), "fonts/songti.TTF");// 仿宋打不出汉字
+        Typeface typeface = Typeface.createFromAsset(context.getAssets(), "fonts/pingfanghei.ttf");
         Typeface font = Typeface.create(typeface, Typeface.NORMAL);
-        paint.setTypeface(font);*/
+        paint.setTypeface(font);
         int FontHeightSum = 0;
         for (PrintParameter mParameter : AllString) {
             paint.setTextSize(sp2px(context, mParameter.getSize()));
@@ -58,8 +61,26 @@ public class ImagePHelperV2 {
                     mParameter.addResultContent(mParameter.getContent());
                 }
                 FontHeightSum += mParameter.getDealResultContent().size() * oneLineHeight;
-            } else {
+            } else if (PrintValue.Content_Line_dashed == mParameter.getType() || PrintValue.Content_Line_full == mParameter.getType() || PrintValue.Content_Line_star == mParameter.getType() || PrintValue.Content_line_space == mParameter.getType()) {
                 FontHeightSum += oneLineHeight;
+            } else if (PrintValue.Content_barCode == mParameter.getType()) {
+                Bitmap bitmapTemp = BitmapUtil.createBarcode(mParameter.getBarStr(),  WIDTH, (int) mParameter.getBarHeight());
+                if(bitmapTemp!=null){
+                    FontHeightSum +=  bitmapTemp.getHeight();
+                    mParameter.bitmap=bitmapTemp;
+                }
+            } else if (PrintValue.Content_QRCode == mParameter.getType()) {
+                int height= (int) mParameter.getQrHeight();
+                if(height>WIDTH){
+                    height=WIDTH;
+                }
+                Bitmap bitmapTemp = BitmapUtil.createQRImage(mParameter.getqRStr(), height, height);
+                if(bitmapTemp!=null){
+                    FontHeightSum +=  bitmapTemp.getHeight();
+                    mParameter.bitmap=bitmapTemp;
+                }
+            } else if (PrintValue.Content_image == mParameter.getType()) {
+//                FontHeightSum += oneLineHeight;
             }
         }
         Bitmap bitmap = Bitmap.createBitmap(WIDTH, FontHeightSum, Bitmap.Config.RGB_565);
@@ -104,9 +125,9 @@ public class ImagePHelperV2 {
             } else if (PrintValue.Content_Line_full == mParameter.getType()) {
                 //    实线full
                 y = (float) (y + FontHeighttemp / 2.0);
-                paint.setStrokeWidth((float)mParameter.getLineWidth());  //设置线宽
+                paint.setStrokeWidth(mParameter.getLineWidth());  //设置线宽
                 canvas.drawLine(x, y, WIDTH, y, paint);
-                paint.setStrokeWidth((float) 1.0);    //恢复线宽
+                paint.setStrokeWidth(1.0f);    //恢复线宽
                 y = (float) (y + FontHeighttemp / 2.0);
             } else if (PrintValue.Content_line_space == mParameter.getType()) {
                 //空格
@@ -118,11 +139,24 @@ public class ImagePHelperV2 {
                 int measuredWidth = mBounds.width();
                 int widthcount = WIDTH / measuredWidth;
                 StringBuffer sb = new StringBuffer();
-                for (int i = 0; i <=widthcount; i++) {
+                for (int i = 0; i <= widthcount; i++) {
                     sb.append("***");
                 }
                 y = y + FontHeighttemp;
                 canvas.drawText(sb.toString(), x, y, paint);
+            }else if (PrintValue.Content_barCode == mParameter.getType()) {
+                if(mParameter.bitmap!=null){
+                   int startx= (WIDTH-mParameter.bitmap.getWidth())/2;
+                    canvas.drawBitmap(mParameter.bitmap, startx, y, null);
+                    y = y +  mParameter.bitmap.getHeight();
+                }
+            }else if (PrintValue.Content_QRCode == mParameter.getType()) {
+                if(mParameter.bitmap!=null){
+                    int startx= (WIDTH-mParameter.bitmap.getWidth())/2;
+                    canvas.drawBitmap(mParameter.bitmap, startx, y, null);
+                    y = y +  mParameter.bitmap.getHeight();
+                }
+            }else if (PrintValue.Content_image == mParameter.getType()) {
 
             }
         }
