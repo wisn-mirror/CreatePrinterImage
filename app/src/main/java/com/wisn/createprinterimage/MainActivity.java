@@ -1,38 +1,55 @@
 package com.wisn.createprinterimage;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 
+import com.ums.AppHelper;
+import com.ums.upos.sdk.exception.CallServiceException;
+import com.ums.upos.sdk.exception.SdkException;
+import com.ums.upos.sdk.printer.PrinterManager;
+import com.wisn.createprinterimage.aa.ImagePHelperV1;
+import com.wisn.createprinterimage.aa.PrintParameter;
+import com.wisn.createprinterimage.aa.PrintValue;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button imageBtn;
+public class MainActivity extends Activity implements View.OnClickListener {
+    private static final String TAG ="MainActivity" ;
+    private Button imageBtn,p_printer;
     private ImageView mView;
+    private Bitmap bitmapr;
+    private PrinterManager printerManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         imageBtn = (Button) findViewById(R.id.p_image);
+        p_printer = (Button) findViewById(R.id.p_printer);
         mView = (ImageView) findViewById(R.id.s_image);
         imageBtn.setOnClickListener(this);
+        p_printer.setOnClickListener(this);
+        printerManager = new PrinterManager();
+        try {
+            int i = printerManager.initPrinter();
+
+        } catch (SdkException e) {
+            e.printStackTrace();
+        } catch (CallServiceException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -42,10 +59,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ImageTask mImageTask = new ImageTask();
                 mImageTask.execute("");
                 break;
+            case R.id.p_printer:
+
+                if (bitmapr == null) {
+                    Log.d(TAG, "bitmap is null");
+                    return;
+                }
+                String fname = "/sdcard/ddd.png";
+                try {
+                    FileOutputStream out = new FileOutputStream(fname);
+                    bitmapr.compress(Bitmap.CompressFormat.PNG, 100, out);
+                    Log.d(TAG, "file" + fname + "output done.");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
+                AppHelper.callPrint(this, fname);
+                /*try {
+                    printerManager.setBitmap(bitmapr);
+                    printerManager.startPrint(new OnPrintResultListener() {
+                        @Override
+                        public void onPrintResult(int i) {
+
+                        }
+                    });
+                } catch (SdkException e) {
+                    e.printStackTrace();
+                } catch (CallServiceException e) {
+                    e.printStackTrace();
+                }*/
+                break;
         }
     }
 
+
+
     private class ImageTask extends AsyncTask<String, Integer, Bitmap> {
+
         @Override
         protected Bitmap doInBackground(String... params) {
             return creatImage();
@@ -60,11 +110,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
+            bitmapr=bitmap;
             imageBtn.setText("生成");
             mView.setImageBitmap(bitmap);
         }
     }
 
+
+    private Bitmap creatImage() {
+        try {
+            InputStream ins = getAssets().open("res" + File.separator + "ic_launcher.png");
+            Bitmap imageBitmap = BitmapFactory.decodeStream(ins);
+            ArrayList<PrintParameter> mParameters = new ArrayList<>();
+            mParameters.add(new PrintParameter("来伊份外卖", PrintValue.TextSizeLevel_1,PrintValue.Left));
+            mParameters.add(new PrintParameter("终端编号(TEBMINAL NO): 10300751终端编号(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_1,PrintValue.Left));
+            mParameters.add(new PrintParameter("*****************", PrintValue.TextSizeLevel_1,PrintValue.Left));
+            mParameters.add(new PrintParameter("终端编号(TEBMINAL NO): 10300751终端编号(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_2,PrintValue.Left));
+            mParameters.add(new PrintParameter("*****************", PrintValue.TextSizeLevel_2,PrintValue.Left));
+            mParameters.add(new PrintParameter("终端编号(TEBMINAL NO): 10300751终端编号(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_3,PrintValue.Left));
+            mParameters.add(new PrintParameter("*****************", PrintValue.TextSizeLevel_3,PrintValue.Left));
+            mParameters.add(new PrintParameter("终端编号(TEBMINAL NO): 10300751终端编号(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_4,PrintValue.Left));
+            mParameters.add(new PrintParameter("*****************", PrintValue.TextSizeLevel_4,PrintValue.Left));
+            mParameters.add(new PrintParameter("终端编号(TEBMINAL NO): 10300751终端编号(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_5,PrintValue.Left));
+            mParameters.add(new PrintParameter("*****************", PrintValue.TextSizeLevel_5,PrintValue.Left));
+            Bitmap textBitmap =new ImagePHelperV1().StringListtoBitmap(MainActivity.this, mParameters);
+//            Bitmap textBitmap2 = PrintImageUtils.StringListtoBitmap(MainActivity.this, mParametersEx);
+
+            Bitmap mergeBitmap = PrintImageUtils.addBitmapInHead(imageBitmap, textBitmap);
+
+//            Log.e("fmx", "argb_8888 =  " + mergeBitmap3.getHeight() * mergeBitmap3.getWidth() * 32);
+//            Log.e("fmx", "rgb_565 =  " + mergeBitmap3.getHeight() * mergeBitmap3.getWidth() * 16);
+            return textBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+/*
 
     private Bitmap creatImage() {
         try {
@@ -136,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mParameters.add(new StringBitmapParameter("-------------------------"));
             mParameters.add(new StringBitmapParameter("交易金额未超过300.00元，无需签名"));
 
-            ArrayList<StringBitmapParameter> mParametersEx = new ArrayList<>();/**如果是空的列表，也可以传入，会打印空行*/
+            ArrayList<StringBitmapParameter> mParametersEx = new ArrayList<>();*//**如果是空的列表，也可以传入，会打印空行*//*
             mParametersEx.add(new StringBitmapParameter("\n"));
 //            mParametersEx.add(new StringBitmapParameter("\n"));
 //            mParametersEx.add(new StringBitmapParameter("\n"));
@@ -156,6 +238,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
         return null;
-    }
+    }*/
     
 }
