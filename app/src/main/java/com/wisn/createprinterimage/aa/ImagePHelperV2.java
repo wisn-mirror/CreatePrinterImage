@@ -6,10 +6,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
+import android.text.TextUtils;
+
 
 import com.wisn.createprinterimage.BitmapUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +49,7 @@ public class ImagePHelperV2 {
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
             int oneLineHeight = (int) Math.abs(fontMetrics.leading) + (int) Math.abs(fontMetrics.ascent) + (int) Math.abs(fontMetrics.descent);
             if (PrintValue.Content_Str == mParameter.getType()) {
+                if (TextUtils.isEmpty(mParameter.getContent())) continue;
                 int ALineLength = paint.breakText(mParameter.getContent(), true, WIDTH, null);//检测一行多少字
                 int lenght = mParameter.getContent().length();
                 if (ALineLength < lenght) {
@@ -81,6 +82,11 @@ public class ImagePHelperV2 {
                 }
             } else if (PrintValue.Content_image == mParameter.getType()) {
 //                FontHeightSum += oneLineHeight;
+            } else if (PrintValue.Content_StrLinkend == mParameter.getType()) {
+                List<String> dealResultContent = mParameter.getDealResultContent();
+                if(dealResultContent!=null&&dealResultContent.size()>0){
+                    FontHeightSum += oneLineHeight;
+                }
             }
         }
         Bitmap bitmap = Bitmap.createBitmap(WIDTH, FontHeightSum, Bitmap.Config.RGB_565);
@@ -96,6 +102,7 @@ public class ImagePHelperV2 {
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
             int FontHeighttemp = (int) Math.abs(fontMetrics.leading) + (int) Math.abs(fontMetrics.ascent) + (int) Math.abs(fontMetrics.descent);
             if (PrintValue.Content_Str == mParameter.getType()) {
+                if (TextUtils.isEmpty(mParameter.getContent())) continue;
                 for (String temp : mParameter.getDealResultContent()) {
                     if (mParameter.getGravity() == PrintValue.Right) {
                         x = WIDTH - paint.measureText(temp);
@@ -104,14 +111,11 @@ public class ImagePHelperV2 {
                     } else if (mParameter.getGravity() == PrintValue.Center) {
                         x = (WIDTH - paint.measureText(temp)) / 2.0f;
                     }
-//                int linespace = (int) Math.abs(fontMetrics.leading) + (int) Math.abs(fontMetrics.descent);
-//                int linespace = (int) Math.abs(fontMetrics.leading) ;
                     y = y + FontHeighttemp;
                     canvas.drawText(temp, x, y, paint);
                 }
             } else if (PrintValue.Content_Line_dashed == mParameter.getType()) {
                 //    虚线dashed
-                // .getTextBounds()
                 Rect mBounds = new Rect();
                 paint.getTextBounds("---", 0, 3, mBounds);
                 int measuredWidth = mBounds.width();
@@ -121,7 +125,7 @@ public class ImagePHelperV2 {
                     sb.append("---");
                 }
                 y = y + FontHeighttemp;
-                canvas.drawText(sb.toString(), x, y, paint);
+                canvas.drawText(sb.toString(), 0, y, paint);
             } else if (PrintValue.Content_Line_full == mParameter.getType()) {
                 //    实线full
                 y = (float) (y + FontHeighttemp / 2.0);
@@ -143,10 +147,10 @@ public class ImagePHelperV2 {
                     sb.append("***");
                 }
                 y = y + FontHeighttemp;
-                canvas.drawText(sb.toString(), x, y, paint);
+                canvas.drawText(sb.toString(), 0, y, paint);
             }else if (PrintValue.Content_barCode == mParameter.getType()) {
                 if(mParameter.bitmap!=null){
-                   int startx= (WIDTH-mParameter.bitmap.getWidth())/2;
+                    int startx= (WIDTH-mParameter.bitmap.getWidth())/2;
                     canvas.drawBitmap(mParameter.bitmap, startx, y, null);
                     y = y +  mParameter.bitmap.getHeight();
                 }
@@ -158,6 +162,17 @@ public class ImagePHelperV2 {
                 }
             }else if (PrintValue.Content_image == mParameter.getType()) {
 
+            }else if (PrintValue.Content_StrLinkend == mParameter.getType()) {
+                List<String> dealResultContent = mParameter.getDealResultContent();
+                if(dealResultContent!=null&&dealResultContent.size()>0){
+                    y = y + FontHeighttemp;
+                    String left = dealResultContent.get(0);
+                    canvas.drawText(left, 0, y, paint);
+                    String right = dealResultContent.get(1);
+                    x = WIDTH - paint.measureText(right);
+                    canvas.drawText(right, x, y, paint);
+                    x=0;
+                }
             }
         }
         canvas.save();

@@ -8,15 +8,9 @@ public class PrintValue {
     public static final int Left = 1;
     public static final int Right = 2;
 
-//    public static final int TextSizeLevel_1 = 8;
-//    public static final int TextSizeLevel_2 = 9;
-//    public static final int TextSizeLevel_3 = 10;
-//    public static final int TextSizeLevel_4 = 12;
-//    public static final int TextSizeLevel_5 = 16;
-
-    public static final int TextSizeLevel_1 = 12;
-    public static final int TextSizeLevel_2 = 13;
-    public static final int TextSizeLevel_3 = 14;
+    public static final int TextSizeLevel_1 = 10;
+    public static final int TextSizeLevel_2 = 12;
+    public static final int TextSizeLevel_3 = 13;
     public static final int TextSizeLevel_4 = 15;
     public static final int TextSizeLevel_5 = 18;
 
@@ -35,5 +29,8 @@ public class PrintValue {
     public static final int Content_QRCode = 23;
     //图片
     public static final int Content_image = 24;
+
+    //头尾拼接
+    public static final int Content_StrLinkend = 25;
 
 }

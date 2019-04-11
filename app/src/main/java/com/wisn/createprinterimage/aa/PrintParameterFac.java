@@ -30,4 +30,12 @@ public class PrintParameterFac {
         printParameter2.setQrContent(qrStr, height);
         return printParameter2;
     }
+
+    public static PrintParameter getLinked(String leftStr, String rightStr,int sizeLevel) {
+        PrintParameter printParameter2 = new PrintParameter(PrintValue.Content_StrLinkend);
+        printParameter2.addResultContent(leftStr);
+        printParameter2.addResultContent(rightStr);
+        printParameter2.setSizeLevel(sizeLevel);
+        return printParameter2;
+    }
 }
