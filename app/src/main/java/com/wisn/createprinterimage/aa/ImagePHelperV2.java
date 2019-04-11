@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * Created by Wisn on 2019/4/10 下午5:36.
  */
-public class ImagePHelperV2{
+public class ImagePHelperV2 {
 
     private final static int WIDTH = 384;
     private final static int START_LEFT = 0;
@@ -30,7 +31,6 @@ public class ImagePHelperV2{
 
     /**
      * 生成图片
-     *
      */
     public Bitmap StringListtoBitmap(Context context, ArrayList<PrintParameter> AllString) {
         if (AllString.size() <= 0)
@@ -41,28 +41,26 @@ public class ImagePHelperV2{
         Typeface font = Typeface.create(typeface, Typeface.NORMAL);
         paint.setTypeface(font);*/
         int FontHeightSum = 0;
-
         for (PrintParameter mParameter : AllString) {
             paint.setTextSize(sp2px(context, mParameter.getSize()));
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
-//            int linespace = (int) Math.abs(fontMetrics.leading) + (int) Math.abs(fontMetrics.descent);
-//            int linespace = (int) Math.abs(fontMetrics.leading) ;
-           /* if(y==0){
-                y= (int) Math.abs(fontMetrics.leading) + (int) Math.abs(fontMetrics.ascent);
-            }*/
             int oneLineHeight = (int) Math.abs(fontMetrics.leading) + (int) Math.abs(fontMetrics.ascent) + (int) Math.abs(fontMetrics.descent);
-            int ALineLength = paint.breakText(mParameter.getContent(), true, WIDTH, null);//检测一行多少字
-            int lenght = mParameter.getContent().length();
-            if (ALineLength < lenght) {
-                String substring1 = mParameter.getContent().substring(0, ALineLength);
-                mParameter.getDealResultContent().add(substring1);
-                String substring = mParameter.getContent().substring(ALineLength);
-                List<String> dealResultContent = mParameter.getDealResultContent();
-                getMesureText(substring, paint, dealResultContent);
+            if (PrintValue.Content_Str == mParameter.getType()) {
+                int ALineLength = paint.breakText(mParameter.getContent(), true, WIDTH, null);//检测一行多少字
+                int lenght = mParameter.getContent().length();
+                if (ALineLength < lenght) {
+                    String substring1 = mParameter.getContent().substring(0, ALineLength);
+                    mParameter.getDealResultContent().add(substring1);
+                    String substring = mParameter.getContent().substring(ALineLength);
+                    List<String> dealResultContent = mParameter.getDealResultContent();
+                    getMesureText(substring, paint, dealResultContent);
+                } else {
+                    mParameter.addResultContent(mParameter.getContent());
+                }
+                FontHeightSum += mParameter.getDealResultContent().size() * oneLineHeight;
             } else {
-                mParameter.addResultContent(mParameter.getContent());
+                FontHeightSum += oneLineHeight;
             }
-            FontHeightSum += mParameter.getDealResultContent().size() * oneLineHeight ;
         }
         Bitmap bitmap = Bitmap.createBitmap(WIDTH, FontHeightSum, Bitmap.Config.RGB_565);
         for (int i = 0; i < bitmap.getWidth(); i++) {
@@ -73,31 +71,66 @@ public class ImagePHelperV2{
 
         Canvas canvas = new Canvas(bitmap);
         for (PrintParameter mParameter : AllString) {
-            for (String temp : mParameter.getDealResultContent()) {
-                paint.setTextSize(sp2px(context, mParameter.getSize()));
-
-                if (mParameter.getGravity() == PrintValue.Right) {
-                    x = WIDTH - paint.measureText(temp);
-                } else if (mParameter.getGravity() == PrintValue.Left) {
-                    x = START_LEFT;
-                } else if (mParameter.getGravity() == PrintValue.Center) {
-                    x = (WIDTH - paint.measureText(temp)) / 2.0f;
-                }
-                Paint.FontMetrics fontMetrics = paint.getFontMetrics();
+            paint.setTextSize(sp2px(context, mParameter.getSize()));
+            Paint.FontMetrics fontMetrics = paint.getFontMetrics();
+            int FontHeighttemp = (int) Math.abs(fontMetrics.leading) + (int) Math.abs(fontMetrics.ascent) + (int) Math.abs(fontMetrics.descent);
+            if (PrintValue.Content_Str == mParameter.getType()) {
+                for (String temp : mParameter.getDealResultContent()) {
+                    if (mParameter.getGravity() == PrintValue.Right) {
+                        x = WIDTH - paint.measureText(temp);
+                    } else if (mParameter.getGravity() == PrintValue.Left) {
+                        x = START_LEFT;
+                    } else if (mParameter.getGravity() == PrintValue.Center) {
+                        x = (WIDTH - paint.measureText(temp)) / 2.0f;
+                    }
 //                int linespace = (int) Math.abs(fontMetrics.leading) + (int) Math.abs(fontMetrics.descent);
 //                int linespace = (int) Math.abs(fontMetrics.leading) ;
-                int FontHeighttemp = (int) Math.abs(fontMetrics.leading) + (int) Math.abs(fontMetrics.ascent) + (int) Math.abs(fontMetrics.descent);
-//                y = y  + linespace;
-                y = y + FontHeighttemp  ;
+                    y = y + FontHeighttemp;
+                    canvas.drawText(temp, x, y, paint);
+                }
+            } else if (PrintValue.Content_Line_dashed == mParameter.getType()) {
+                //    虚线dashed
+                // .getTextBounds()
+                Rect mBounds = new Rect();
+                paint.getTextBounds("---", 0, 3, mBounds);
+                int measuredWidth = mBounds.width();
+                int widthcount = WIDTH / measuredWidth;
+                StringBuffer sb = new StringBuffer();
+                for (int i = 0; i <= widthcount; i++) {
+                    sb.append("---");
+                }
+                y = y + FontHeighttemp;
+                canvas.drawText(sb.toString(), x, y, paint);
+            } else if (PrintValue.Content_Line_full == mParameter.getType()) {
+                //    实线full
+                y = (float) (y + FontHeighttemp / 2.0);
+                paint.setStrokeWidth((float)mParameter.getLineWidth());  //设置线宽
+                canvas.drawLine(x, y, WIDTH, y, paint);
+                paint.setStrokeWidth((float) 1.0);    //恢复线宽
+                y = (float) (y + FontHeighttemp / 2.0);
+            } else if (PrintValue.Content_line_space == mParameter.getType()) {
+                //空格
+                y = y + FontHeighttemp;
+            } else if (PrintValue.Content_Line_star == mParameter.getType()) {
+                //    ******
+                Rect mBounds = new Rect();
+                paint.getTextBounds("***", 0, 3, mBounds);
+                int measuredWidth = mBounds.width();
+                int widthcount = WIDTH / measuredWidth;
+                StringBuffer sb = new StringBuffer();
+                for (int i = 0; i <=widthcount; i++) {
+                    sb.append("***");
+                }
+                y = y + FontHeighttemp;
+                canvas.drawText(sb.toString(), x, y, paint);
 
-                canvas.drawText(temp, x, y, paint);
             }
-
         }
         canvas.save();
         canvas.restore();
         return bitmap;
     }
+
 
     public List<String> getMesureText(String content, Paint paint, List<String> data) {
         int ALineLength = paint.breakText(content, true, WIDTH, null);//检测一行多少字

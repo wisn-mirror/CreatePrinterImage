@@ -13,12 +13,19 @@ public class PrintParameter {
     private List<String> dealResultContent;
     private int sizeLevel;
     private int gravity;
+    private int Type;
+    private int LineWidth=1;
 
 
     public PrintParameter(String content, int sizeLevel, int gravity) {
+        Type=PrintValue.Content_Str;
         this.content = content;
         this.sizeLevel = sizeLevel;
         this.gravity = gravity;
+    }
+    public PrintParameter(int Type, int sizeLevel) {
+        this.Type=Type;
+        this.sizeLevel = sizeLevel;
     }
 
     public boolean addResultContent(String lineContet) {
@@ -34,6 +41,14 @@ public class PrintParameter {
             dealResultContent = new ArrayList<>();
         }
         return dealResultContent;
+    }
+
+    public int getLineWidth() {
+        return LineWidth;
+    }
+
+    public void setLineWidth(int lineWidth) {
+        LineWidth = lineWidth;
     }
 
     public void setDealResultContent(List<String> dealResultContent) {
@@ -63,4 +78,9 @@ public class PrintParameter {
     public void setGravity(int gravity) {
         this.gravity = gravity;
     }
+
+    public int getType() {
+        return Type;
+    }
+
 }

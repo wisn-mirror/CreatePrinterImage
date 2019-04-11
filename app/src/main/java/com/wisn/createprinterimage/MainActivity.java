@@ -16,6 +16,7 @@ import com.ums.upos.sdk.exception.CallServiceException;
 import com.ums.upos.sdk.exception.SdkException;
 import com.ums.upos.sdk.printer.PrinterManager;
 import com.wisn.createprinterimage.aa.ImagePHelperV1;
+import com.wisn.createprinterimage.aa.ImagePHelperV2;
 import com.wisn.createprinterimage.aa.PrintParameter;
 import com.wisn.createprinterimage.aa.PrintValue;
 
@@ -123,17 +124,46 @@ public class MainActivity extends Activity implements View.OnClickListener {
             Bitmap imageBitmap = BitmapFactory.decodeStream(ins);
             ArrayList<PrintParameter> mParameters = new ArrayList<>();
             mParameters.add(new PrintParameter("来伊份外卖", PrintValue.TextSizeLevel_1,PrintValue.Left));
+            mParameters.add(new PrintParameter("来伊份外卖", PrintValue.TextSizeLevel_1,PrintValue.Center));
+            mParameters.add(new PrintParameter("来伊份外卖", PrintValue.TextSizeLevel_1,PrintValue.Right));
             mParameters.add(new PrintParameter("终端编号(TEBMINAL NO): 10300751终端编号(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_1,PrintValue.Left));
-            mParameters.add(new PrintParameter("*****************", PrintValue.TextSizeLevel_1,PrintValue.Left));
+//            mParameters.add(new PrintParameter("*****************", PrintValue.TextSizeLevel_1,PrintValue.Left));
+            mParameters.add(new PrintParameter(PrintValue.Content_Line_dashed, PrintValue.TextSizeLevel_1));
+            PrintParameter printParameter = new PrintParameter(PrintValue.Content_Line_full, PrintValue.TextSizeLevel_1);
+            printParameter.setLineWidth(3);
+            mParameters.add(printParameter);
+            mParameters.add(new PrintParameter(PrintValue.Content_Line_star, PrintValue.TextSizeLevel_1));
+            mParameters.add(new PrintParameter(PrintValue.Content_line_space, PrintValue.TextSizeLevel_1));
             mParameters.add(new PrintParameter("终端编号(TEBMINAL NO): 10300751终端编号(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_2,PrintValue.Left));
-            mParameters.add(new PrintParameter("*****************", PrintValue.TextSizeLevel_2,PrintValue.Left));
+//            mParameters.add(new PrintParameter("*****************", PrintValue.TextSizeLevel_2,PrintValue.Left));
+            mParameters.add(new PrintParameter(PrintValue.Content_Line_dashed, PrintValue.TextSizeLevel_2));
+            mParameters.add(new PrintParameter(PrintValue.Content_Line_full, PrintValue.TextSizeLevel_2));
+            mParameters.add(new PrintParameter(PrintValue.Content_Line_star, PrintValue.TextSizeLevel_2));
+            mParameters.add(new PrintParameter(PrintValue.Content_line_space, PrintValue.TextSizeLevel_2));
+
             mParameters.add(new PrintParameter("终端编号(TEBMINAL NO): 10300751终端编号(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_3,PrintValue.Left));
-            mParameters.add(new PrintParameter("*****************", PrintValue.TextSizeLevel_3,PrintValue.Left));
+//            mParameters.add(new PrintParameter("*****************", PrintValue.TextSizeLevel_3,PrintValue.Left));
+            mParameters.add(new PrintParameter(PrintValue.Content_Line_dashed, PrintValue.TextSizeLevel_3));
+            mParameters.add(new PrintParameter(PrintValue.Content_Line_full, PrintValue.TextSizeLevel_3));
+            mParameters.add(new PrintParameter(PrintValue.Content_Line_star, PrintValue.TextSizeLevel_3));
+            mParameters.add(new PrintParameter(PrintValue.Content_line_space, PrintValue.TextSizeLevel_3));
+
             mParameters.add(new PrintParameter("终端编号(TEBMINAL NO): 10300751终端编号(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_4,PrintValue.Left));
-            mParameters.add(new PrintParameter("*****************", PrintValue.TextSizeLevel_4,PrintValue.Left));
+            mParameters.add(new PrintParameter(PrintValue.Content_Line_dashed, PrintValue.TextSizeLevel_4));
+            mParameters.add(new PrintParameter(PrintValue.Content_Line_full, PrintValue.TextSizeLevel_4));
+            mParameters.add(new PrintParameter(PrintValue.Content_Line_star, PrintValue.TextSizeLevel_4));
+            mParameters.add(new PrintParameter(PrintValue.Content_line_space, PrintValue.TextSizeLevel_4));
+
             mParameters.add(new PrintParameter("终端编号(TEBMINAL NO): 10300751终端编号(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_5,PrintValue.Left));
-            mParameters.add(new PrintParameter("*****************", PrintValue.TextSizeLevel_5,PrintValue.Left));
-            Bitmap textBitmap =new ImagePHelperV1().StringListtoBitmap(MainActivity.this, mParameters);
+            mParameters.add(new PrintParameter(PrintValue.Content_Line_dashed, PrintValue.TextSizeLevel_5));
+//            mParameters.add(new PrintParameter(PrintValue.Content_Line_full, PrintValue.TextSizeLevel_5));
+            PrintParameter printParameter2 = new PrintParameter(PrintValue.Content_Line_full, PrintValue.TextSizeLevel_5);
+            printParameter2.setLineWidth(5);
+            mParameters.add(printParameter2);
+            mParameters.add(new PrintParameter(PrintValue.Content_Line_star, PrintValue.TextSizeLevel_5));
+            mParameters.add(new PrintParameter(PrintValue.Content_line_space, PrintValue.TextSizeLevel_5));
+
+            Bitmap textBitmap =new ImagePHelperV2().StringListtoBitmap(MainActivity.this, mParameters);
 //            Bitmap textBitmap2 = PrintImageUtils.StringListtoBitmap(MainActivity.this, mParametersEx);
 
             Bitmap mergeBitmap = PrintImageUtils.addBitmapInHead(imageBitmap, textBitmap);
