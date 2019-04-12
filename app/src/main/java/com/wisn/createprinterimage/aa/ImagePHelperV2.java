@@ -23,7 +23,7 @@ public class ImagePHelperV2 {
     private final static int START_LEFT = 0;
 
 
-    private static float x = START_LEFT, y;
+    private  float x = START_LEFT, y;
 
     /**
      * 将sp值转换为px值，保证文字大小不变
@@ -39,6 +39,7 @@ public class ImagePHelperV2 {
     public Bitmap StringListtoBitmap(Context context, ArrayList<PrintParameter> AllString) {
         if (AllString.size() <= 0)
             return Bitmap.createBitmap(WIDTH, WIDTH / 4, Bitmap.Config.RGB_565);
+        y=0;
         Paint paint = new Paint();
         paint.setAntiAlias(false);
 //        Typeface typeface = Typeface.createFromAsset(context.getAssets(), "fonts/songti.TTF");

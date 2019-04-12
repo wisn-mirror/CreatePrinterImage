@@ -76,7 +76,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     e.printStackTrace();
                     return;
                 }
-//                AppHelper.callPrint(this, fname);
+                AppHelper.callPrint(this, fname);
                 /*try {
                     printerManager.setBitmap(bitmapr);
                     printerManager.startPrint(new OnPrintResultListener() {
