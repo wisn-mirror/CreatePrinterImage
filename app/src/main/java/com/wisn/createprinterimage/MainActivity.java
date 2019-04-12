@@ -19,6 +19,7 @@ import com.wisn.createprinterimage.aa.ImagePHelperV2;
 import com.wisn.createprinterimage.aa.PrintParameter;
 import com.wisn.createprinterimage.aa.PrintParameterFac;
 import com.wisn.createprinterimage.aa.PrintValue;
+import com.wisn.createprinterimage.aa.SpliteCombination;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -123,6 +124,32 @@ public class MainActivity extends Activity implements View.OnClickListener {
             InputStream ins = getAssets().open("res" + File.separator + "ic_launcher.png");
             Bitmap imageBitmap = BitmapFactory.decodeStream(ins);
             ArrayList<PrintParameter> mParameters = new ArrayList<>();
+            mParameters.add(PrintParameterFac.getSpliteCombination(8,4,PrintValue.TextSizeLevel_1)
+                    .addPrintParameter(new SpliteCombination(2,"来伊份商品名称很长"))
+                    .addPrintParameter(new SpliteCombination(1,"X2"))
+                    .addPrintParameter(new SpliteCombination(1,"¥33.2")));
+
+            mParameters.add(PrintParameterFac.getSpliteCombination(8,4,PrintValue.TextSizeLevel_1)
+                    .addPrintParameter(new SpliteCombination(2,"来伊份商品名称很长很长很长很长很长很长很长很长"))
+                    .addPrintParameter(new SpliteCombination(1,"X2"))
+                    .addPrintParameter(new SpliteCombination(1,"¥33.2")));
+
+            mParameters.add(PrintParameterFac.getSpliteCombination(8,4,PrintValue.TextSizeLevel_1)
+                    .addPrintParameter(new SpliteCombination(2,"来伊份商品名称很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长"))
+                    .addPrintParameter(new SpliteCombination(1,"X2"))
+                    .addPrintParameter(new SpliteCombination(1,"¥33.2")));
+            mParameters.add(PrintParameterFac.getSpliteCombination(8,4,PrintValue.TextSizeLevel_1)
+                    .addPrintParameter(new SpliteCombination(1,"来伊份商品名称很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长"))
+                    .addPrintParameter(new SpliteCombination(1,"¥10.2"))
+                    .addPrintParameter(new SpliteCombination(1,"X2"))
+                    .addPrintParameter(new SpliteCombination(1,"¥33.2"))
+            );
+            mParameters.add(PrintParameterFac.getSpliteCombination(8,4,PrintValue.TextSizeLevel_1)
+                    .addPrintParameter(new SpliteCombination(1,"来伊份商品名称很长来伊份商品名称很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长来伊份商品名称很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长"))
+                    .addPrintParameter(new SpliteCombination(1,"¥10.2"))
+                    .addPrintParameter(new SpliteCombination(1,"X2"))
+                    .addPrintParameter(new SpliteCombination(1,"¥33.2"))
+            );
             mParameters.add(PrintParameterFac.getContent("来伊份外卖左", PrintValue.TextSizeLevel_1,PrintValue.Left));
             mParameters.add(PrintParameterFac.getContent("来伊份外卖中", PrintValue.TextSizeLevel_1,PrintValue.Center));
             mParameters.add(PrintParameterFac.getContent("来伊份外卖右", PrintValue.TextSizeLevel_1,PrintValue.Right));

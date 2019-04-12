@@ -10,6 +10,7 @@ import android.text.TextUtils;
 
 
 import com.wisn.createprinterimage.BitmapUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class ImagePHelperV2 {
                     mParameter.getDealResultContent().add(substring1);
                     String substring = mParameter.getContent().substring(ALineLength);
                     List<String> dealResultContent = mParameter.getDealResultContent();
-                    getMesureText(substring, paint, dealResultContent);
+                    getMesureText(substring, paint, dealResultContent, -1);
                 } else {
                     mParameter.addResultContent(mParameter.getContent());
                 }
@@ -65,27 +66,45 @@ public class ImagePHelperV2 {
             } else if (PrintValue.Content_Line_dashed == mParameter.getType() || PrintValue.Content_Line_full == mParameter.getType() || PrintValue.Content_Line_star == mParameter.getType() || PrintValue.Content_line_space == mParameter.getType()) {
                 FontHeightSum += oneLineHeight;
             } else if (PrintValue.Content_barCode == mParameter.getType()) {
-                Bitmap bitmapTemp = BitmapUtil.createBarcode(mParameter.getBarStr(),  WIDTH, (int) mParameter.getBarHeight());
-                if(bitmapTemp!=null){
-                    FontHeightSum +=  bitmapTemp.getHeight();
-                    mParameter.bitmap=bitmapTemp;
+                Bitmap bitmapTemp = BitmapUtil.createBarcode(mParameter.getBarStr(), WIDTH, (int) mParameter.getBarHeight());
+                if (bitmapTemp != null) {
+                    FontHeightSum += bitmapTemp.getHeight();
+                    mParameter.bitmap = bitmapTemp;
                 }
             } else if (PrintValue.Content_QRCode == mParameter.getType()) {
-                int height= (int) mParameter.getQrHeight();
-                if(height>WIDTH){
-                    height=WIDTH;
+                int height = (int) mParameter.getQrHeight();
+                if (height > WIDTH) {
+                    height = WIDTH;
                 }
                 Bitmap bitmapTemp = BitmapUtil.createQRImage(mParameter.getqRStr(), height, height);
-                if(bitmapTemp!=null){
-                    FontHeightSum +=  bitmapTemp.getHeight();
-                    mParameter.bitmap=bitmapTemp;
+                if (bitmapTemp != null) {
+                    FontHeightSum += bitmapTemp.getHeight();
+                    mParameter.bitmap = bitmapTemp;
                 }
             } else if (PrintValue.Content_image == mParameter.getType()) {
 //                FontHeightSum += oneLineHeight;
             } else if (PrintValue.Content_StrLinkend == mParameter.getType()) {
                 List<String> dealResultContent = mParameter.getDealResultContent();
-                if(dealResultContent!=null&&dealResultContent.size()>0){
+                if (dealResultContent != null && dealResultContent.size() > 0) {
                     FontHeightSum += oneLineHeight;
+                }
+            } else if (PrintValue.Content_SpliteCombination == mParameter.getType()) {
+                List<SpliteCombination> spliteCombinationList = mParameter.getSpliteCombinationList();
+                if (spliteCombinationList != null && spliteCombinationList.size() > 0) {
+                    SpliteCombination spliteCombination = spliteCombinationList.get(0);
+                    if (TextUtils.isEmpty(spliteCombination.contentStr)) continue;
+                    int ALineLength = paint.breakText(spliteCombination.contentStr, true, WIDTH, null);//检测一行多少字
+                    int lenght = spliteCombination.contentStr.length();
+                    if (ALineLength < lenght) {
+                        String substring1 = spliteCombination.contentStr.substring(0, ALineLength);
+                        mParameter.getDealResultContent().add(substring1);
+                        String substring = spliteCombination.contentStr.substring(ALineLength);
+                        List<String> dealResultContent = mParameter.getDealResultContent();
+                        getMesureText(substring, paint, dealResultContent, mParameter.getSpliteFirstMaxLength());
+                    } else {
+                        mParameter.addResultContent(spliteCombination.contentStr);
+                    }
+                    FontHeightSum += mParameter.getDealResultContent().size() * oneLineHeight;
                 }
             }
         }
@@ -111,7 +130,7 @@ public class ImagePHelperV2 {
                     } else if (mParameter.getGravity() == PrintValue.Center) {
                         x = (WIDTH - paint.measureText(temp)) / 2.0f;
                     }
-                    y = y + FontHeighttemp;
+                    y += FontHeighttemp;
                     canvas.drawText(temp, x, y, paint);
                 }
             } else if (PrintValue.Content_Line_dashed == mParameter.getType()) {
@@ -124,7 +143,7 @@ public class ImagePHelperV2 {
                 for (int i = 0; i <= widthcount; i++) {
                     sb.append("---");
                 }
-                y = y + FontHeighttemp;
+                y += FontHeighttemp;
                 canvas.drawText(sb.toString(), 0, y, paint);
             } else if (PrintValue.Content_Line_full == mParameter.getType()) {
                 //    实线full
@@ -135,7 +154,7 @@ public class ImagePHelperV2 {
                 y = (float) (y + FontHeighttemp / 2.0);
             } else if (PrintValue.Content_line_space == mParameter.getType()) {
                 //空格
-                y = y + FontHeighttemp;
+                y += FontHeighttemp;
             } else if (PrintValue.Content_Line_star == mParameter.getType()) {
                 //    ******
                 Rect mBounds = new Rect();
@@ -146,33 +165,71 @@ public class ImagePHelperV2 {
                 for (int i = 0; i <= widthcount; i++) {
                     sb.append("***");
                 }
-                y = y + FontHeighttemp;
+                y += FontHeighttemp;
                 canvas.drawText(sb.toString(), 0, y, paint);
-            }else if (PrintValue.Content_barCode == mParameter.getType()) {
-                if(mParameter.bitmap!=null){
-                    int startx= (WIDTH-mParameter.bitmap.getWidth())/2;
+            } else if (PrintValue.Content_barCode == mParameter.getType()) {
+                if (mParameter.bitmap != null) {
+                    int startx = (WIDTH - mParameter.bitmap.getWidth()) / 2;
                     canvas.drawBitmap(mParameter.bitmap, startx, y, null);
-                    y = y +  mParameter.bitmap.getHeight();
+                    y += mParameter.bitmap.getHeight();
                 }
-            }else if (PrintValue.Content_QRCode == mParameter.getType()) {
-                if(mParameter.bitmap!=null){
-                    int startx= (WIDTH-mParameter.bitmap.getWidth())/2;
+            } else if (PrintValue.Content_QRCode == mParameter.getType()) {
+                if (mParameter.bitmap != null) {
+                    int startx = (WIDTH - mParameter.bitmap.getWidth()) / 2;
                     canvas.drawBitmap(mParameter.bitmap, startx, y, null);
-                    y = y +  mParameter.bitmap.getHeight();
+                    y += mParameter.bitmap.getHeight();
                 }
-            }else if (PrintValue.Content_image == mParameter.getType()) {
+            } else if (PrintValue.Content_image == mParameter.getType()) {
 
-            }else if (PrintValue.Content_StrLinkend == mParameter.getType()) {
+            } else if (PrintValue.Content_StrLinkend == mParameter.getType()) {
                 List<String> dealResultContent = mParameter.getDealResultContent();
-                if(dealResultContent!=null&&dealResultContent.size()>0){
-                    y = y + FontHeighttemp;
+                if (dealResultContent != null && dealResultContent.size() > 0) {
+                    y += FontHeighttemp;
                     String left = dealResultContent.get(0);
                     canvas.drawText(left, 0, y, paint);
                     String right = dealResultContent.get(1);
                     x = WIDTH - paint.measureText(right);
                     canvas.drawText(right, x, y, paint);
-                    x=0;
+                    x = 0;
                 }
+            } else if (PrintValue.Content_SpliteCombination == mParameter.getType()) {
+                List<SpliteCombination> spliteCombinationList = mParameter.getSpliteCombinationList();
+                if (spliteCombinationList != null && spliteCombinationList.size() > 0) {
+                    if (mParameter.getDealResultContent().size() > 1) {
+                        List<String> strings = mParameter.getDealResultContent().subList(0, mParameter.getDealResultContent().size() - 2);
+                        for (String v : strings) {
+                            y += FontHeighttemp;
+                            canvas.drawText(v, 0, y, paint);
+//                            y = y + FontHeighttemp;
+                        }
+                    }
+                    y += FontHeighttemp;
+                    String s = mParameter.getDealResultContent().get(mParameter.getDealResultContent().size() - 1);
+                    float spliteCombinationWeightSum = mParameter.getSpliteCombinationWeightSum();
+                    float weisumtemp = 0f;
+                    int size = spliteCombinationList.size();
+                    for (int i = 0; i < size; i++) {
+                        SpliteCombination spliteCombination = spliteCombinationList.get(i);
+                        int tempxStart = (int) (WIDTH * (weisumtemp / spliteCombinationWeightSum));
+                        if (i == 0) {
+                            int firstEnd = WIDTH;
+                            if (spliteCombinationList.size() > 1) {
+                                SpliteCombination spliteCombination1 = spliteCombinationList.get(0);
+                                firstEnd = (int) (WIDTH * (spliteCombination1.weight / spliteCombinationWeightSum));
+                            }
+                            int ALineLength = paint.breakText(s, true, firstEnd, null);
+                            String tempreust = s.substring(0, ALineLength);
+                            canvas.drawText(tempreust, tempxStart, y, paint);
+                        } else {
+                            canvas.drawText(spliteCombination.contentStr, tempxStart, y, paint);
+
+
+                        }
+                        weisumtemp += spliteCombination.weight;
+                    }
+
+                }
+
             }
         }
         canvas.save();
@@ -181,13 +238,17 @@ public class ImagePHelperV2 {
     }
 
 
-    public List<String> getMesureText(String content, Paint paint, List<String> data) {
+    public List<String> getMesureText(String content, Paint paint, List<String> data, int maxSize) {
         int ALineLength = paint.breakText(content, true, WIDTH, null);//检测一行多少字
         if (ALineLength < content.length()) {
             String substring = content.substring(0, ALineLength);
             data.add(substring);
-            String newcontent = content.substring(ALineLength - 1);
-            return getMesureText(newcontent, paint, data);
+            if (maxSize == -1 || data.size() < maxSize) {
+                String newcontent = content.substring(ALineLength - 1);
+                return getMesureText(newcontent, paint, data, maxSize);
+            } else {
+                return data;
+            }
         } else {
             data.add(content);
             return data;

@@ -33,4 +33,7 @@ public class PrintValue {
     //头尾拼接
     public static final int Content_StrLinkend = 25;
 
+    //比例分割
+    public static final int Content_SpliteCombination = 26;
+
 }

@@ -23,6 +23,9 @@ public class PrintParameter {
     private float qrHeight;
     private String qRStr;
     public Bitmap bitmap;
+    private List<SpliteCombination> spliteCombinationList;
+    private float spliteCombinationWeightSum;
+    private int spliteFirstMaxLength=1;
 
     public PrintParameter(int type) {
         Type = type;
@@ -122,8 +125,34 @@ public class PrintParameter {
         return qrHeight;
     }
 
-    public void setQrContent(String qRStr,float qrHeight) {
+    public void setQrContent(String qRStr, float qrHeight) {
         this.qrHeight = qrHeight;
         this.qRStr = qRStr;
     }
+
+    public List<SpliteCombination> getSpliteCombinationList() {
+        return spliteCombinationList;
+    }
+
+    public void setSpliteCombinationList(int spliteFirstMaxLength,float spliteCombinationWeightSum) {
+        this.spliteCombinationList = new ArrayList<>();
+        this.spliteCombinationWeightSum = spliteCombinationWeightSum;
+        this.spliteFirstMaxLength = spliteFirstMaxLength;
+
+    }
+    public PrintParameter addPrintParameter(SpliteCombination spliteCombination){
+        if(spliteCombinationList!=null){
+            spliteCombinationList.add(spliteCombination);
+        }
+        return this;
+    }
+
+    public float getSpliteCombinationWeightSum() {
+        return spliteCombinationWeightSum;
+    }
+
+    public int getSpliteFirstMaxLength() {
+        return spliteFirstMaxLength;
+    }
+
 }
