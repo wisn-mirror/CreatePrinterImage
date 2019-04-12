@@ -196,7 +196,7 @@ public class ImagePHelperV2 {
                 List<SpliteCombination> spliteCombinationList = mParameter.getSpliteCombinationList();
                 if (spliteCombinationList != null && spliteCombinationList.size() > 0) {
                     if (mParameter.getDealResultContent().size() > 1) {
-                        List<String> strings = mParameter.getDealResultContent().subList(0, mParameter.getDealResultContent().size() - 2);
+                        List<String> strings = mParameter.getDealResultContent().subList(0, mParameter.getDealResultContent().size() - 1);
                         for (String v : strings) {
                             y += FontHeighttemp;
                             canvas.drawText(v, 0, y, paint);
@@ -239,16 +239,15 @@ public class ImagePHelperV2 {
 
 
     public List<String> getMesureText(String content, Paint paint, List<String> data, int maxSize) {
+        if (maxSize != -1 && data.size() >= maxSize) {
+            return data;
+        }
         int ALineLength = paint.breakText(content, true, WIDTH, null);//检测一行多少字
         if (ALineLength < content.length()) {
             String substring = content.substring(0, ALineLength);
             data.add(substring);
-            if (maxSize == -1 || data.size() < maxSize) {
-                String newcontent = content.substring(ALineLength - 1);
-                return getMesureText(newcontent, paint, data, maxSize);
-            } else {
-                return data;
-            }
+            String newcontent = content.substring(ALineLength - 1);
+            return getMesureText(newcontent, paint, data, maxSize);
         } else {
             data.add(content);
             return data;

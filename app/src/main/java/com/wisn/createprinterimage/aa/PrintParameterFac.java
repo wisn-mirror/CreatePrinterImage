@@ -42,6 +42,7 @@ public class PrintParameterFac {
     }
     
     public static PrintParameter getSpliteCombination(int spliteFirstMaxLength, float spliteCombinationWeightSum, int sizeLevel) {
+        if(spliteFirstMaxLength<1) spliteFirstMaxLength=1;
         PrintParameter printParameter = new PrintParameter(PrintValue.Content_SpliteCombination);
         printParameter.setSizeLevel(sizeLevel);
         printParameter.setSpliteCombinationList(spliteFirstMaxLength,spliteCombinationWeightSum);

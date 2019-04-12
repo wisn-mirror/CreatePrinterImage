@@ -28,8 +28,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends Activity implements View.OnClickListener {
-    private static final String TAG ="MainActivity" ;
-    private Button imageBtn,p_printer;
+    private static final String TAG = "MainActivity";
+    private Button imageBtn, p_printer;
     private ImageView mView;
     private Bitmap bitmapr;
     private PrinterManager printerManager;
@@ -76,7 +76,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     e.printStackTrace();
                     return;
                 }
-                AppHelper.callPrint(this, fname);
+//                AppHelper.callPrint(this, fname);
                 /*try {
                     printerManager.setBitmap(bitmapr);
                     printerManager.startPrint(new OnPrintResultListener() {
@@ -95,7 +95,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
 
-
     private class ImageTask extends AsyncTask<String, Integer, Bitmap> {
 
         @Override
@@ -112,7 +111,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
-            bitmapr=bitmap;
+            bitmapr = bitmap;
             imageBtn.setText("生成");
             mView.setImageBitmap(bitmap);
         }
@@ -124,66 +123,85 @@ public class MainActivity extends Activity implements View.OnClickListener {
             InputStream ins = getAssets().open("res" + File.separator + "ic_launcher.png");
             Bitmap imageBitmap = BitmapFactory.decodeStream(ins);
             ArrayList<PrintParameter> mParameters = new ArrayList<>();
-            mParameters.add(PrintParameterFac.getSpliteCombination(8,4,PrintValue.TextSizeLevel_1)
-                    .addPrintParameter(new SpliteCombination(2,"来伊份商品名称很长"))
-                    .addPrintParameter(new SpliteCombination(1,"X2"))
-                    .addPrintParameter(new SpliteCombination(1,"¥33.2")));
+            mParameters.add(PrintParameterFac.getContent("测试文字排版", PrintValue.TextSizeLevel_5, PrintValue.Center));
+            mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_Line_dashed, PrintValue.TextSizeLevel_2));
 
-            mParameters.add(PrintParameterFac.getSpliteCombination(8,4,PrintValue.TextSizeLevel_1)
-                    .addPrintParameter(new SpliteCombination(2,"来伊份商品名称很长很长很长很长很长很长很长很长"))
-                    .addPrintParameter(new SpliteCombination(1,"X2"))
-                    .addPrintParameter(new SpliteCombination(1,"¥33.2")));
+            mParameters.add(PrintParameterFac.getSpliteCombination(1, 5, PrintValue.TextSizeLevel_1)
+                    .addPrintParameter(new SpliteCombination(3, "商品名"))
+                    .addPrintParameter(new SpliteCombination(1, "数量"))
+                    .addPrintParameter(new SpliteCombination(1, "价格")));
+            mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_Line_star, PrintValue.TextSizeLevel_3));
 
-            mParameters.add(PrintParameterFac.getSpliteCombination(8,4,PrintValue.TextSizeLevel_1)
-                    .addPrintParameter(new SpliteCombination(2,"来伊份商品名称很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长"))
-                    .addPrintParameter(new SpliteCombination(1,"X2"))
-                    .addPrintParameter(new SpliteCombination(1,"¥33.2")));
-            mParameters.add(PrintParameterFac.getSpliteCombination(8,4,PrintValue.TextSizeLevel_1)
-                    .addPrintParameter(new SpliteCombination(1,"来伊份商品名称很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长"))
-                    .addPrintParameter(new SpliteCombination(1,"¥10.2"))
-                    .addPrintParameter(new SpliteCombination(1,"X2"))
-                    .addPrintParameter(new SpliteCombination(1,"¥33.2"))
-            );
-            mParameters.add(PrintParameterFac.getSpliteCombination(8,4,PrintValue.TextSizeLevel_1)
-                    .addPrintParameter(new SpliteCombination(1,"来伊份商品名称很长来伊份商品名称很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长来伊份商品名称很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长"))
-                    .addPrintParameter(new SpliteCombination(1,"¥10.2"))
-                    .addPrintParameter(new SpliteCombination(1,"X2"))
-                    .addPrintParameter(new SpliteCombination(1,"¥33.2"))
-            );
-            mParameters.add(PrintParameterFac.getContent("来伊份外卖左", PrintValue.TextSizeLevel_1,PrintValue.Left));
-            mParameters.add(PrintParameterFac.getContent("来伊份外卖中", PrintValue.TextSizeLevel_1,PrintValue.Center));
-            mParameters.add(PrintParameterFac.getContent("来伊份外卖右", PrintValue.TextSizeLevel_1,PrintValue.Right));
-            mParameters.add(PrintParameterFac.getContent("来伊份外卖(TEBMINAL NO): 10300751来伊份外卖(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_1,PrintValue.Left));
-            mParameters.add(PrintParameterFac.getChartLineFull(PrintValue.TextSizeLevel_1,3f));
-            mParameters.add(PrintParameterFac.getContent("来伊份外卖(TEBMINAL NO): 10300751来伊份外卖(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_2,PrintValue.Left));
+            mParameters.add(PrintParameterFac.getSpliteCombination(1, 5, PrintValue.TextSizeLevel_1)
+                    .addPrintParameter(new SpliteCombination(3, "2列商品名称很长"))
+                    .addPrintParameter(new SpliteCombination(1, "X1"))
+                    .addPrintParameter(new SpliteCombination(1, "¥33.2")));
+            mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_line_space, PrintValue.TextSizeLevel_2));
+
+            mParameters.add(PrintParameterFac.getSpliteCombination(2, 5, PrintValue.TextSizeLevel_1)
+                    .addPrintParameter(new SpliteCombination(3, "2列商品名称很长2列商品名称很长2列商品名称很长2列商品名称很长"))
+                    .addPrintParameter(new SpliteCombination(1, "X3"))
+                    .addPrintParameter(new SpliteCombination(1, "¥525.2")));
+            mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_line_space, PrintValue.TextSizeLevel_2));
+
+            mParameters.add(PrintParameterFac.getSpliteCombination(2, 5, PrintValue.TextSizeLevel_1)
+                    .addPrintParameter(new SpliteCombination(3, "2列商品名称很长2列商品名称很长2列商品名称很长2列商品名称很长"))
+                    .addPrintParameter(new SpliteCombination(1, "X3"))
+                    .addPrintParameter(new SpliteCombination(1, "¥55.2")));
+            mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_line_space, PrintValue.TextSizeLevel_2));
+
+            mParameters.add(PrintParameterFac.getSpliteCombination(2, 5, PrintValue.TextSizeLevel_1)
+                    .addPrintParameter(new SpliteCombination(3, "2列商品名称很长2列商品名称很长2列商品名称很长2列商品名称很长2列商品名称很长2列商品名称很长"))
+                    .addPrintParameter(new SpliteCombination(1, "X2"))
+                    .addPrintParameter(new SpliteCombination(1, "¥33.2")));
+            mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_line_space, PrintValue.TextSizeLevel_2));
+            mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_Line_dashed, PrintValue.TextSizeLevel_2));
+
+            mParameters.add(PrintParameterFac.getSpliteCombination(1, 4, PrintValue.TextSizeLevel_1)
+                    .addPrintParameter(new SpliteCombination(1, "商品名"))
+                    .addPrintParameter(new SpliteCombination(1, "分摊价格"))
+                    .addPrintParameter(new SpliteCombination(1, "数量"))
+                    .addPrintParameter(new SpliteCombination(1, "价格")));
+            mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_Line_star, PrintValue.TextSizeLevel_3));
+
+            mParameters.add(PrintParameterFac.getSpliteCombination(2, 4, PrintValue.TextSizeLevel_1)
+                    .addPrintParameter(new SpliteCombination(1, "3列商品名称很长"))
+                    .addPrintParameter(new SpliteCombination(1, "¥121.2"))
+                    .addPrintParameter(new SpliteCombination(1, "X22"))
+                    .addPrintParameter(new SpliteCombination(1, "¥33.2")));
+            mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_line_space, PrintValue.TextSizeLevel_2));
+
+            mParameters.add(PrintParameterFac.getSpliteCombination(2, 4, PrintValue.TextSizeLevel_1)
+                    .addPrintParameter(new SpliteCombination(1, "3列商品名称3列商品名称很长3列商品名称很长3列商品名称很长很长3列商品名称3列商品名称很长3列商品名称很长3列商品名称很长很长"))
+                    .addPrintParameter(new SpliteCombination(1, "¥10.2"))
+                    .addPrintParameter(new SpliteCombination(1, "X2"))
+                    .addPrintParameter(new SpliteCombination(1, "¥33.2")));
+            mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_line_space, PrintValue.TextSizeLevel_2));
+
+            mParameters.add(PrintParameterFac.getBarCode("123456789012345678", false, 100));
+            mParameters.add(PrintParameterFac.getContent("123456789012345678", PrintValue.TextSizeLevel_2, PrintValue.Center));
+            mParameters.add(PrintParameterFac.getContent("测试文字排版左", PrintValue.TextSizeLevel_1, PrintValue.Left));
+            mParameters.add(PrintParameterFac.getContent("测试文字排版中", PrintValue.TextSizeLevel_1, PrintValue.Center));
+            mParameters.add(PrintParameterFac.getContent("测试文字排版右", PrintValue.TextSizeLevel_1, PrintValue.Right));
+            mParameters.add(PrintParameterFac.getContent("测试文字排版(TEBMINAL NO): 10300751测试文字排版(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_1, PrintValue.Left));
+            mParameters.add(PrintParameterFac.getChartLineFull(PrintValue.TextSizeLevel_1, 3f));
+            mParameters.add(PrintParameterFac.getContent("测试文字排版(TEBMINAL NO): 10300751测试文字排版(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_2, PrintValue.Left));
             mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_Line_dashed, PrintValue.TextSizeLevel_2));
             mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_Line_full, PrintValue.TextSizeLevel_2));
-            mParameters.add(PrintParameterFac.getQRCode("123456789012345678",200));
+            mParameters.add(PrintParameterFac.getQRCode("123456789012345678", 200));
             mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_Line_star, PrintValue.TextSizeLevel_2));
-            mParameters.add(PrintParameterFac.getContent("来伊份外卖(TEBMINAL NO): 10300751来伊份外卖(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_3,PrintValue.Left));
+            mParameters.add(PrintParameterFac.getContent("测试文字排版(TEBMINAL NO): 10300751测试文字排版(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_3, PrintValue.Left));
             mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_line_space, PrintValue.TextSizeLevel_3));
             mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_Line_dashed, PrintValue.TextSizeLevel_3));
             mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_Line_full, PrintValue.TextSizeLevel_3));
             mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_Line_star, PrintValue.TextSizeLevel_3));
-            mParameters.add(PrintParameterFac.getContent("来伊份外卖(TEBMINAL NO): 10300751来伊份外卖(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_5,PrintValue.Left));
-            mParameters.add(PrintParameterFac.getBarCode("123456789012345678",false,100));
-            mParameters.add(PrintParameterFac.getContent("123456789012345678", PrintValue.TextSizeLevel_2,PrintValue.Center));
-            mParameters.add(PrintParameterFac.getContent("来伊份外卖(TEBMINAL NO): 10300751来伊份外卖(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_4,PrintValue.Left));
-//            mParameters.add(PrintParameterFac.getChartLine(PrintValue.Content_Line_dashed, PrintValue.TextSizeLevel_4));
-            mParameters.add(PrintParameterFac.getLinked("配送费：","¥1002" ,PrintValue.TextSizeLevel_2));
-            mParameters.add(PrintParameterFac.getLinked("配送费：","¥1002" ,PrintValue.TextSizeLevel_3));
-            mParameters.add(PrintParameterFac.getLinked("配送费：","¥1002" ,PrintValue.TextSizeLevel_4));
-            mParameters.add(PrintParameterFac.getLinked("配送费：","¥1002" ,PrintValue.TextSizeLevel_5));
-//            mParameters.add(PrintParameterFac.getLinked("配送费：","¥1002" ,PrintValue.TextSizeLevel_2));
-            Bitmap textBitmap =new ImagePHelperV2().StringListtoBitmap(MainActivity.this, mParameters);
-//            Bitmap bitmap = BitmapUtil.generateBitmap("123456789012345678345678345678", 5, ImagePHelperV2.WIDTH, 100);
-//            Bitmap bitmap = BitmapUtil.createBarcode("123456789012345678",  ImagePHelperV2.WIDTH, 100);
-//            Bitmap textBitmap2 = PrintImageUtils.StringListtoBitmap(MainActivity.this, mParametersEx);
+            mParameters.add(PrintParameterFac.getContent("测试文字排版(TEBMINAL NO): 10300751测试文字排版(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_5, PrintValue.Left));
 
-//            Bitmap mergeBitmap = PrintImageUtils.addBitmapInHead(bitmap, textBitmap);
-
-//            Log.e("fmx", "argb_8888 =  " + mergeBitmap3.getHeight() * mergeBitmap3.getWidth() * 32);
-//            Log.e("fmx", "rgb_565 =  " + mergeBitmap3.getHeight() * mergeBitmap3.getWidth() * 16);
+            mParameters.add(PrintParameterFac.getContent("测试文字排版(TEBMINAL NO): 10300751测试文字排版(TEBMINAL NO):10300751", PrintValue.TextSizeLevel_4, PrintValue.Left));
+            mParameters.add(PrintParameterFac.getLinked("满20减1", "¥-1", PrintValue.TextSizeLevel_2));
+            mParameters.add(PrintParameterFac.getLinked("配送费：", "¥1002", PrintValue.TextSizeLevel_3));
+            mParameters.add(PrintParameterFac.getLinked("总价：", "¥1002", PrintValue.TextSizeLevel_5));
+            Bitmap textBitmap = new ImagePHelperV2().StringListtoBitmap(MainActivity.this, mParameters);
             return textBitmap;
         } catch (IOException e) {
             e.printStackTrace();
@@ -283,5 +301,5 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
         return null;
     }*/
-    
+
 }
