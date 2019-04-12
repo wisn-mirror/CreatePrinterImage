@@ -23,7 +23,7 @@ public class ImagePHelperV2 {
     private final static int START_LEFT = 0;
 
 
-    private  float x = START_LEFT, y;
+    private float x = START_LEFT, y;
 
     /**
      * 将sp值转换为px值，保证文字大小不变
@@ -39,7 +39,7 @@ public class ImagePHelperV2 {
     public Bitmap StringListtoBitmap(Context context, ArrayList<PrintParameter> AllString) {
         if (AllString.size() <= 0)
             return Bitmap.createBitmap(WIDTH, WIDTH / 4, Bitmap.Config.RGB_565);
-        y=0;
+        y = 0;
         Paint paint = new Paint();
         paint.setAntiAlias(false);
 //        Typeface typeface = Typeface.createFromAsset(context.getAssets(), "fonts/songti.TTF");
@@ -106,14 +106,14 @@ public class ImagePHelperV2 {
                         mParameter.addResultContent(spliteCombination.contentStr);
                     }
                     FontHeightSum += mParameter.getDealResultContent().size() * oneLineHeight;
-                    if(mParameter.getDealResultContent().size()==1){
+                    if (mParameter.getDealResultContent().size() == 1) {
                         String s = mParameter.getDealResultContent().get(0);
                         float spliteCombinationWeightSum = mParameter.getSpliteCombinationWeightSum();
-                        int  firstEnd = (int) (WIDTH * (spliteCombination.weight / spliteCombinationWeightSum));
+                        int firstEnd = (int) (WIDTH * (spliteCombination.weight / spliteCombinationWeightSum));
                         int result = paint.breakText(s, true, firstEnd, null);
                         int fullLength = paint.breakText(s, true, WIDTH, null);
-                        if(fullLength>result){
-                            FontHeightSum +=oneLineHeight;
+                        if (fullLength > result) {
+                            FontHeightSum += oneLineHeight;
                         }
                     }
                 }
@@ -229,13 +229,12 @@ public class ImagePHelperV2 {
                             }
                             int result = paint.breakText(s, true, firstEnd, null);
                             int ALineLength = paint.breakText(s, true, WIDTH, null);
-
-                            if (mParameter.getDealResultContent().size()> 1&&ALineLength<result) {
-                                String tempreust = s.substring(0, result);
-                                canvas.drawText(tempreust, tempxStart, y, paint);
-                            }else{
+                            if (mParameter.getDealResultContent().size() == 1 && ALineLength > result) {
                                 canvas.drawText(s, tempxStart, y, paint);
                                 y += FontHeighttemp;
+                            } else {
+                                String tempreust = s.substring(0, result);
+                                canvas.drawText(tempreust, tempxStart, y, paint);
                             }
                         } else {
                             canvas.drawText(spliteCombination.contentStr, tempxStart, y, paint);
