@@ -106,6 +106,16 @@ public class ImagePHelperV2 {
                         mParameter.addResultContent(spliteCombination.contentStr);
                     }
                     FontHeightSum += mParameter.getDealResultContent().size() * oneLineHeight;
+                    if(mParameter.getDealResultContent().size()==1){
+                        String s = mParameter.getDealResultContent().get(0);
+                        float spliteCombinationWeightSum = mParameter.getSpliteCombinationWeightSum();
+                        int  firstEnd = (int) (WIDTH * (spliteCombination.weight / spliteCombinationWeightSum));
+                        int result = paint.breakText(s, true, firstEnd, null);
+                        int fullLength = paint.breakText(s, true, WIDTH, null);
+                        if(fullLength>result){
+                            FontHeightSum +=oneLineHeight;
+                        }
+                    }
                 }
             }
         }
@@ -201,7 +211,6 @@ public class ImagePHelperV2 {
                         for (String v : strings) {
                             y += FontHeighttemp;
                             canvas.drawText(v, 0, y, paint);
-//                            y = y + FontHeighttemp;
                         }
                     }
                     y += FontHeighttemp;
@@ -218,12 +227,18 @@ public class ImagePHelperV2 {
                                 SpliteCombination spliteCombination1 = spliteCombinationList.get(0);
                                 firstEnd = (int) (WIDTH * (spliteCombination1.weight / spliteCombinationWeightSum));
                             }
-                            int ALineLength = paint.breakText(s, true, firstEnd, null);
-                            String tempreust = s.substring(0, ALineLength);
-                            canvas.drawText(tempreust, tempxStart, y, paint);
+                            int result = paint.breakText(s, true, firstEnd, null);
+                            int ALineLength = paint.breakText(s, true, WIDTH, null);
+
+                            if (mParameter.getDealResultContent().size()> 1&&ALineLength<result) {
+                                String tempreust = s.substring(0, result);
+                                canvas.drawText(tempreust, tempxStart, y, paint);
+                            }else{
+                                canvas.drawText(s, tempxStart, y, paint);
+                                y += FontHeighttemp;
+                            }
                         } else {
                             canvas.drawText(spliteCombination.contentStr, tempxStart, y, paint);
-
 
                         }
                         weisumtemp += spliteCombination.weight;
