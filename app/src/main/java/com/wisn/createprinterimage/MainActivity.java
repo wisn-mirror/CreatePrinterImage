@@ -14,12 +14,16 @@ import android.view.View;
 import com.ums.AppHelper;
 import com.ums.upos.sdk.exception.CallServiceException;
 import com.ums.upos.sdk.exception.SdkException;
+import com.ums.upos.sdk.printer.OnPrintResultListener;
 import com.ums.upos.sdk.printer.PrinterManager;
+import com.ums.upos.sdk.system.BaseSystemManager;
+import com.ums.upos.sdk.system.OnServiceStatusListener;
 import com.wisn.createprinterimage.aa.ImagePHelperV2;
 import com.wisn.createprinterimage.aa.PrintParameter;
 import com.wisn.createprinterimage.aa.PrintParameterFac;
 import com.wisn.createprinterimage.aa.PrintValue;
 import com.wisn.createprinterimage.aa.SpliteCombination;
+import com.wisn.createprinterimage.bb.PrintTest;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,7 +33,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends Activity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
-    private Button imageBtn, p_printer;
+    private Button imageBtn, p_printer,p_printer_byScript;
     private ImageView mView;
     private Bitmap bitmapr;
     private PrinterManager printerManager;
@@ -40,23 +44,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
         imageBtn = (Button) findViewById(R.id.p_image);
         p_printer = (Button) findViewById(R.id.p_printer);
+        p_printer_byScript = (Button) findViewById(R.id.p_printer_byScript);
         mView = (ImageView) findViewById(R.id.s_image);
         imageBtn.setOnClickListener(this);
         p_printer.setOnClickListener(this);
-        printerManager = new PrinterManager();
-        try {
-            int i = printerManager.initPrinter();
+        p_printer_byScript.setOnClickListener(this);
 
-        } catch (SdkException e) {
-            e.printStackTrace();
-        } catch (CallServiceException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.p_printer_byScript:
+                PrintTest printTest=new PrintTest();
+                printTest.deviceServiceLogin(this.getApplication());
+                break;
             case R.id.p_image:
                 ImageTask mImageTask = new ImageTask();
                 mImageTask.execute("");
@@ -77,6 +79,35 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     return;
                 }
                 AppHelper.callPrint(this, fname);
+                try {
+                    BaseSystemManager.getInstance().deviceServiceLogin(MainActivity.this.getApplicationContext(),
+                            null, "99999999", new OnServiceStatusListener() {
+
+                                @Override
+                                public void onStatus(int status) {
+                                    printerManager = new PrinterManager();
+                                    try {
+                                        int i = printerManager.initPrinter();
+//                                        printerManager.setBitmap(bitmapr);
+                                        Log.e(TAG, "打印机arg0===" + status+"  i:"+i);
+                                        printerManager.setPrnTplText("测试");
+                                        printerManager.startPrint(new OnPrintResultListener() {
+                                            @Override
+                                            public void onPrintResult(int i) {
+
+                                            }
+                                        });
+                                    } catch (SdkException e) {
+                                        e.printStackTrace();
+                                    } catch (CallServiceException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                            });
+                } catch (SdkException e) {
+                    e.printStackTrace();
+                }
                 /*try {
                     printerManager.setBitmap(bitmapr);
                     printerManager.startPrint(new OnPrintResultListener() {

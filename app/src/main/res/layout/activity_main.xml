@@ -22,6 +22,12 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dip"
              android:text="打印"/>
+        <Button
+            android:id="@+id/p_printer_byScript"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dip"
+            android:text="脚本打印"/>
     </LinearLayout>
 
 
